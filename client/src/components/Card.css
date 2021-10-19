@@ -1,0 +1,86 @@
+.container__card{
+    background-image: url("../assets/fondoPantalla.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: absolute;
+    top:80px;
+    bottom: 0;
+    left:0;
+    right:0;
+}
+/* .container__card__back{
+  width:80vw;
+  height:80vh;
+  position: absolute;
+  margin:20vh 20vw;
+  top:0;
+  background-image: url("../assets/fondoPantalla.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  border-radius: 1.5rem;
+} */
+.container__card__item {
+  display: flex;
+  flex-direction:column;
+}
+
+.card__item__name {
+    /* color: #000000;
+    align-items: center;
+    margin:0px 280px; */
+    color: #000000;
+    font-size: 20px;
+    line-height: 12px;
+    margin:10px 300px;
+}
+
+.card__item__btn{
+  color: #000000;
+  font-size: 12px;
+  line-height: 12px;
+  top:80px;
+  bottom: 0;
+  left:0;
+  right:0;
+  border-radius: 1.5rem;
+}
+
+.container__card__back{
+    width:80vw;
+    height:80vh;
+    position: absolute;
+    margin:20vh 20vw;
+    top:0;
+    background-image: url("../assets/fondoPantalla.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 1.5rem;
+}
+
+  
+  @media only screen and (min-width: 1024px) {
+    .cards__items {
+      display: flex;
+    }
+  }
+  
+  @media only screen and (max-width: 1024px) {
+    .cards__item {
+      margin-bottom: 2rem;
+    }
+  }
+  @media only screen and (min-width: 1024px) {
+    .cards__items {
+      display: flex;
+    }
+  }
+  
+  @media only screen and (max-width: 1024px) {
+    .cards__item {
+      margin-bottom: 2rem;
+    }
+  }
+  
+
+  
+  
