@@ -13,18 +13,46 @@ const app = express.Router();
 
 app.get('/dogs', async (_req, res, next) => {
     try{
+        let dogsdbPromise = Dog.findAll({
+            include:Temperamento
+        })
+
         let apiDogs = await axios.get('https://api.thedogapi.com/v1/breeds')
         apiDogs = apiDogs.data;
-        let detailDog = apiDogs.map(dogs => {
-            let dog = {
-                image:dogs.image.url,
-                nombre:dogs.name,
-                temperamento:dogs.temperament,
-                peso:dogs.weight.imperial,
-            }
-            return dog;
+
+        return Promise.all([
+            dogsdbPromise,
+            apiDogs
+        ]).then(response => {
+            let dogsdb = response[0];
+            let apiDogs = response[1];
+            dogsdb = dogsdb.map(dogs => {
+                console.log('Nuevamente yooooooooo',dogs.dataValues.Temperamentos[0].name)
+                return {
+                    id:dogs.Id,
+                    image:dogs.image,
+                    temperamento:dogs.dataValues.Temperamentos[0].name,
+                    name:dogs.name,
+                    altura:dogs.altura,
+                    peso:dogs.peso,
+                    años:dogs.años
+                }
+            })
+
+            apiDogs = apiDogs.map(dogs => {
+                return {
+                    id:dogs.id,
+                    image:dogs.image.url,
+                    name:dogs.name,
+                    temperamento:dogs.temperament,
+                    peso:dogs.weight.imperial,
+                }
+            })
+
+            let allDogs = dogsdb.concat(apiDogs)
+            if(allDogs) return res.json(allDogs)
+        
         }) 
-        res.json(detailDog)
     }catch(error){
         next(error)
     }
@@ -52,13 +80,15 @@ app.get('/dogs-name', (req, res, next) => {
                 return {
                     id:dogs.Id,
                     name:dogs.name,
+                    image:dogs.image,
                 }
             })
             let apiDogs = result[1].data
             apiDogs = apiDogs.map(dogs => {
                 return {
                     id:dogs.id,
-                    name:dogs.name
+                    name:dogs.name,
+                    image:dogs.image.url
                 }
             })
             let allDogs = dogsdb.concat(apiDogs)
@@ -91,7 +121,9 @@ app.get('/dogs/:idRaza', async (req,res,next) => {
     var dogId;
     try{
         if(typeof idRaza === 'string' && idRaza.length > 10){
-            dogId = await Dog.findByPk(idRaza) 
+            dogId = await Dog.findByPk(idRaza, {
+                include:Temperamento
+            }) 
         }else {
             let dogApiResponse = await axios.get('https://api.thedogapi.com/v1/breeds')
             dogApiResponse = dogApiResponse.data
@@ -167,25 +199,44 @@ app.get('/temperament', async (_req,res,next) => {
 // -Botón/Opción para crear una nueva raza de perro
 
 
-app.post('/dog', async (req,res,next) => {
-    const {name,altura,peso,años} = req.body;
+app.post('/dog', (req,res,next) => {
+    let {name, altura, peso, años, image, temperamento } = req.body;
     try{
+        if(!image) image = 'https://i.imgur.com/tc5eTf9.jpg'
         if(!name || !altura || !peso || !años){
             return res.json({message:'por favor ingresar todo los campos'})
         }
-        let newdog = await Dog.create({
+        Dog.create({
             name,
             altura, 
             peso,
             años,
-            
+            image, 
+        }).then(dog => {
+            dog.setTemperamentos(temperamento)
+            console.log(dog)
+            res.status(200).send(dog)
         })
-        res.json(newdog)
 
     }catch(error){
         next(error)
     }
 })
+
+// app.post('/createdogandtemp', async (req,res,next) => {
+//     try{
+//         const { dogid,temperamentid} = req.body;
+//         let dogcreate = await Dog.findByPk(dogid)
+//         let temperamentcreate = await Temperamento.findByPk(temperamentid)
+//         let result = await dogcreate.addTemperamento(temperamentcreate)
+//         console.log ('SOY EL RESULTADO DE LA ASOCIACION ', result)
+//         res.json(result)
+
+//     }catch(err){
+//         next(err)
+//     }
+// })
+
 
 
 module.exports = app;

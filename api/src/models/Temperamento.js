@@ -10,10 +10,11 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      // Id:{
+      // id:{  // adicion
       //   type: DataTypes.BIGINT,
       //   allowNull: false,
       //   primarykey:true, 
+      //   autoIncrement:true
       // }
     },
     {timestamps:false}
