@@ -6,7 +6,7 @@ const app = express.Router();
 app.post('/createmperamento', async (req,res,next) => {
     const {name} = req.body;
     try{
-        let newTemp = await Temperamento.create({
+        let newTemp = await Temperamento.findOrCreate({
             name,         
         })
         res.json(newTemp.dataValues)

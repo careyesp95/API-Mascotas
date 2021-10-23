@@ -27,7 +27,7 @@ app.get('/dogs', async (_req, res, next) => {
             let dogsdb = response[0];
             let apiDogs = response[1];
             dogsdb = dogsdb.map(dogs => {
-                console.log('Nuevamente yooooooooo',dogs.dataValues.Temperamentos[0].name)
+                console.log('Nuevamente yooooooooo',dogs.dataValues)
                 return {
                     id:dogs.Id,
                     image:dogs.image,
@@ -92,9 +92,14 @@ app.get('/dogs-name', (req, res, next) => {
                 }
             })
             let allDogs = dogsdb.concat(apiDogs)
-            allDogs = allDogs.find(data => data.name.toLowerCase() === name.toLowerCase())
-            if(!allDogs) return res.json({mesagge:'no hay raza'})
-            if(allDogs) return res.json(allDogs)
+            if(name){
+                allDog = allDogs.find(data => data.name.toLowerCase() === name.toLowerCase())
+                if(!allDogs) return res.json({mesagge:'no hay raza'})
+                if(allDogs) return res.json(allDog)
+            }else{
+                res.send(allDogs)
+
+            }
         })
     }catch(error){
         next(error)
@@ -127,7 +132,8 @@ app.get('/dogs/:idRaza', async (req,res,next) => {
         }else {
             let dogApiResponse = await axios.get('https://api.thedogapi.com/v1/breeds')
             dogApiResponse = dogApiResponse.data
-            allDogs = dogApiResponse.find(value => value.id === Number(idRaza))
+            allDogs = dogApiResponse.find(value => value.id == idRaza)
+            
             dogId = {
                 image:allDogs.image.url,
                 name:allDogs.name,
@@ -172,12 +178,13 @@ app.get('/temperament', async (_req,res,next) => {
                         
                 });
                 // inicialmento solo me voy crear 50 elementos que corresponden a tipos de temperamento
-                for(let i = 0; i < 20; i++){
-                    await Temperamento.create({
-                        name:temperamentFinally[i]
+                for(let i = 0; i < temp.length; i++){
+                    await Temperamento.findOrCreate({
+                        where:{name:temperamentFinally[i]}
                     })
                 }
-                res.send(temperamentFinally.slice(0,20))
+                res.send(temperamentFinally)
+                //res.send(temperamentFinally.slice(0,20))
             })
         }
     }catch(error){
@@ -199,24 +206,36 @@ app.get('/temperament', async (_req,res,next) => {
 // -Botón/Opción para crear una nueva raza de perro
 
 
-app.post('/dog', (req,res,next) => {
+app.post('/dog', async (req,res,next) => {
     let {name, altura, peso, años, image, temperamento } = req.body;
+    console.log('ASI LLEGO TEMPERAMENTO',temperamento)
     try{
         if(!image) image = 'https://i.imgur.com/tc5eTf9.jpg'
         if(!name || !altura || !peso || !años){
             return res.json({message:'por favor ingresar todo los campos'})
         }
-        Dog.create({
+        let dog = await Dog.create({
             name,
             altura, 
             peso,
             años,
             image, 
-        }).then(dog => {
-            dog.setTemperamentos(temperamento)
-            console.log(dog)
-            res.status(200).send(dog)
         })
+        let temp = await Temperamento.findAll({
+            where:{name:temperamento}
+        })
+        dog.addTemperamento(temp)
+        res.status(200).send("Dog creado con exito")
+        // Dog.create({
+        //     name,
+        //     altura, 
+        //     peso,
+        //     años,
+        //     image, 
+        // }).then(dog => {
+        //     dog.setTemperamentos(temperamento)
+        //     res.status(200).send(dog)
+        // })
 
     }catch(error){
         next(error)
