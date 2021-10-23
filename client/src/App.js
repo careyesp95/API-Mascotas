@@ -8,7 +8,7 @@ import HomeSearch from './pages/HomeSearch';
 import {BrowserRouter,Route} from 'react-router-dom';
 import {useDispatch} from 'react-redux';
 import {useEffect} from 'react';
-import {getDogs} from './actions/index';
+import { getDogs} from './actions/index';
 
 
 function App() {

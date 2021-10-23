@@ -7,13 +7,8 @@ function Dog(props) {
     return (  
         <>
         {
-            // props.name === undefined ? 
-            // <Link to= '/home/search'>
-            //     <Message name={props.name}/>
-            // </Link>
-            // :
             <figure className='cards__item' data-category={props.name} >
-                <Link to={`/home/dogdetail/${props.Id}`}>
+                <Link to={`/home/dogdetail/${props.id}`}>
                     <img
                     className ='cards__item__img'
                     src={props.image} 

@@ -1,0 +1,14 @@
+.container__page {
+    display: flex;
+    flex-direction:row;
+    justify-content:space-evenly;
+    margin-top: 10px;
+}
+
+.container__btn{
+    background-color: rgba(246, 238, 238, 0.651);
+    border-radius: 20px;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+}

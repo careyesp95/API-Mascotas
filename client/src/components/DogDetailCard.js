@@ -3,7 +3,7 @@ import './DogDetail.css'
 
 function DogDetailCard(props) {
     return (
-        <>
+        <div>
             <img
             className ='cards__img'
             src={props?.image} 
@@ -28,7 +28,7 @@ function DogDetailCard(props) {
                 className='cards__item__life'
                 >{`Años: ${props?.años}`}</p>
             </div>    
-        </>
+        </div>
     )
 }
 

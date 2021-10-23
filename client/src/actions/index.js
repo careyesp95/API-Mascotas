@@ -5,8 +5,8 @@ import {
     TEMPERAMENTOS,
     CREATE_DOG,
     CREATE_TEMPERAMENTO,
-    ORDENAR_ASC,
-    ORDENAR_DESC,
+    ORDENAR_TEMPERAMENTO,
+    ORDENAR_NAME,
     ORDENAR_MAS_PESADO,
     ORDENAR_MAS_LIVIANO
 } from './actionsConst';
@@ -93,8 +93,8 @@ export function createDog(datos){
     }
 }
 
-export function createTemp(name){
-    console.log('soy lo que llega del dispatch de crear nuevo temp',name)
+export function createTemp(nuevoTemp){
+    let name = {name:nuevoTemp};
     return function(dispatch){
         return axios.post('http://localhost:3001/api/createmperamento',name)
         .then(response => {
@@ -118,3 +118,10 @@ export function createTemp(name){
 //     }
 // }
 
+export function ordenarByName(payload){
+    console.log('VALIDACION',payload)
+    return {
+        type:ORDENAR_NAME,
+        payload
+    }
+}

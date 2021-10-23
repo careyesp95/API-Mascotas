@@ -2,69 +2,88 @@ import React,{useState,useEffect} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
 import Dog from '../components/Dog';
 import Card from '../components/Card'
-import {getDogs} from '../actions/index'
+import {getDogs,ordenarByName} from '../actions/index'
 import '../components/Dog.css';
-import SearchBar from '../components/SearchBar'
+import SearchBar from '../components/SearchBar';
+import Paginado from '../components/Paginado';
+
 
 
 function Home() {
-    var dogs = useSelector(state => state.dogs) // api externa
-    const dispatch = useDispatch()
-    const [current, SetCurrent] = useState(0)
-    const value = dogs.length - 4;
+    const dogs = useSelector(state => state.dogs) 
+    const  dispatch = useDispatch()
+    //paginado
+    const [orden, setOrden] = useState('');
+    const[currentPage, setCurrentPage] = useState(1);
+    const[dogForPage, setDogForPage] = useState(8);
+    const positionLastDogPage = currentPage * dogForPage;
+    const positionFirstDogPage = positionLastDogPage - dogForPage;
+    const currentDog = dogs.slice(positionFirstDogPage,positionLastDogPage)
+    
+    const page = (pageNumber) => {
+        setCurrentPage(pageNumber)
+    }
+
 
     useEffect(() => {
         dispatch(getDogs())
-    },[])
-    
-    const pageDog = () => dogs.slice(current, current + 8)        
-    
-
-    const nextPage = () => {
-        if(current < value)
-        SetCurrent(current + 8);
-    }
-    const lastPage = () => {
-        if(current > 0) 
-        SetCurrent(current - 8);
-    }
+    },[dispatch])
 
     var dogsSearch = useSelector(state => state.dogsSearch)
     if (typeof dogsSearch === 'object') return <Card />
+
+    function onOrderHandleChange(e) {
+        e.preventDefault();
+        dispatch(ordenarByName(e.target.value))
+        setCurrentPage(1)
+        setOrden(`Ordenado${e.target.value}`)
+    }
+
+    
     
     return (
         <div className='container'>
             <SearchBar />
             <div>
-                <button
-                onClick={lastPage}
-                >
-                Anterior
-                </button>
-                &nbsp;
-                <button
-                onClick={nextPage}
-                >Siguiente
-                </button>
+                <div>
+                    <select  onChange={(e) => onOrderHandleChange(e)}>
+                        <option value='asc'>ASC</option>
+                        <option value='des'>DES</option>
+                    </select>
+                    <select>
+                        <option value='creados'>Creados</option>
+                        <option value='Todos'>Todos</option>
+                    </select>
+                    {/* <select
+                        onChange={(e) => handleStatusTemperament(e)}
+                    >
+                        {
+                            dogsTemp?.map((temp,i) => (
+                                <option 
+                                key={i} 
+                                value={temp}>{temp}</option>
+                            ))
+                        
+                        }  
+                    </select>    */}
+                </div>
             </div>
+            <Paginado
+                dogs={dogs.length}
+                dogForPage={dogForPage}
+                page={page}
+            />
             <div className ='container__dog'>
                     {   
-                        // dogsSearch.length !== 0 ? (
-                        //     <Dog
-                        //     Id={dogsSearch.id}
-                        //     name={dogsSearch.name} 
-                        //     image={dogsSearch.image}
-                        //     />
-                        // ):
-                        pageDog() && pageDog().map(dog => {
-                            return <Dog 
-                                    key={dog.id}
-                                    Id={dog.id}
-                                    name={dog.name} 
-                                    image={dog.image}
-                                    temperament={dog.temperamento}
-                                    />
-                        })
+                     currentDog?.map(dog => {
+                         return <Dog 
+                             key={dog.id}
+                             id={dog.id}
+                             name={dog.name} 
+                             image={dog.image}
+                             temperament={dog.temperamento}
+                         />
+                     })   
                     }
             </div>
         </div>

@@ -5,9 +5,11 @@ import {
     TEMPERAMENTOS,
     CREATE_DOG,
     CREATE_TEMPERAMENTO,
+    ORDENAR_NAME,
 } from '../actions/actionsConst';
 
 const stateInitial = {
+    allDogs:[],
     dogs: [],
     dogsDetail: undefined,
     dogsSearch:undefined,
@@ -16,12 +18,12 @@ const stateInitial = {
 }
 
 function reducer (state=stateInitial, action) {
-    //console.log('HOLA...SOY EL NUEVO TEMPERAMENTO CREADO',action.payload)
     switch (action.type) {
         case GET_DOGS:
             return {
                 ...state,
-                dogs: action.payload
+                dogs: action.payload,
+                allDogs:action.payload
             }
         case GET_DOGS_DETAIL:
             return {
@@ -47,8 +49,35 @@ function reducer (state=stateInitial, action) {
         case CREATE_TEMPERAMENTO:
             return {
                 ...state,
-                temperamentos:[...state,action.payload]
+                temperamentos:action.payload
             }
+        case ORDENAR_NAME:
+            let sortedArray = action.payload === 'asc' ?
+            state.dogs.sort(function(a,b){
+                if(a.name > b.name){
+                    return 1;
+                }
+                if(b.name > a.name){
+                    return -1;
+                }
+                return 0;
+            })
+            : state.dogs.sort(function(a,b){
+                if(a.name > b.name){
+                    return -1;
+                }
+                if(b.name > a.name){
+                    return 1;
+                }
+                return 0;
+            })
+
+            return {
+                ...state,
+                dogs:sortedArray
+            }
+            
+            
         default:
             return state;
     }

@@ -10,8 +10,7 @@
 .cards__item {
   position: relative;
   width: 30%;
-  padding-top: 30%;
-  
+  padding-top: 30%;  
 }
 
 .cards__item::after {
@@ -30,6 +29,7 @@
 
 .cards__item__img {
   position: absolute;
+  box-shadow: 10px 5px 5px #c7b2b273;
   top: 0;
   right: 50;
   bottom: 0;
